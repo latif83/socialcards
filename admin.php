@@ -1,10 +1,10 @@
 <?php
 require 'config.php';
 
-// Handle CRUD actions
+// Handle CRUD & schema actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
-    
+
     // Insert new row
     if ($action === 'insert') {
         $table = $_POST['table'];
@@ -24,6 +24,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $idVal = $_POST['idVal'];
         $stmt = $db->prepare("DELETE FROM `$table` WHERE `$idCol` = ?");
         $stmt->execute([$idVal]);
+    }
+
+    // Create new table
+    if ($action === 'create_table') {
+        $tableName = $_POST['new_table_name'];
+        $columnsRaw = $_POST['new_table_columns']; // format: col1 TYPE, col2 TYPE
+        $columnsArr = array_map('trim', explode(',', $columnsRaw));
+        $colsSql = implode(', ', $columnsArr);
+        $stmt = $db->prepare("CREATE TABLE IF NOT EXISTS `$tableName` ($colsSql)");
+        $stmt->execute();
+    }
+
+    // Add new column
+    if ($action === 'add_column') {
+        $tableName = $_POST['table'];
+        $newColumn = $_POST['new_column']; // format: colname TYPE
+        $stmt = $db->prepare("ALTER TABLE `$tableName` ADD COLUMN $newColumn");
+        $stmt->execute();
     }
 }
 
@@ -47,6 +65,32 @@ $tables = $db->query("SELECT name FROM sqlite_master WHERE type='table' AND name
 <body>
 
 <h1>SQLite Admin Panel</h1>
+
+<!-- Create new table -->
+<h2>Create New Table</h2>
+<form method="post">
+    <input type="hidden" name="action" value="create_table">
+    <label>Table Name: <input type="text" name="new_table_name" required></label><br>
+    <label>Columns (format: col1 TYPE, col2 TYPE): <input type="text" name="new_table_columns" required></label><br>
+    <button type="submit">Create Table</button>
+</form>
+
+<!-- Add column to existing table -->
+<h2>Add Column to Existing Table</h2>
+<form method="post">
+    <input type="hidden" name="action" value="add_column">
+    <label>Table: 
+        <select name="table">
+            <?php foreach ($tables as $tableOption): ?>
+                <option value="<?= htmlspecialchars($tableOption) ?>"><?= htmlspecialchars($tableOption) ?></option>
+            <?php endforeach; ?>
+        </select>
+    </label><br>
+    <label>New Column (format: name TYPE): <input type="text" name="new_column" required></label><br>
+    <button type="submit">Add Column</button>
+</form>
+
+<hr>
 
 <?php foreach ($tables as $table): ?>
     <h2>Table: <?= htmlspecialchars($table) ?></h2>
