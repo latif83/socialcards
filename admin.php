@@ -1,7 +1,11 @@
 <?php
 require 'config.php';
 
-// Handle CRUD & schema actions
+// Handle CRUD & schema & custom SQL
+$customResult = [];
+$customMessage = '';
+$customError = '';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
 
@@ -43,6 +47,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $db->prepare("ALTER TABLE `$tableName` ADD COLUMN $newColumn");
         $stmt->execute();
     }
+
+    // Execute custom SQL
+    if ($action === 'custom_sql') {
+        $customSql = $_POST['custom_sql'] ?? '';
+        try {
+            $stmt = $db->prepare($customSql);
+            $stmt->execute();
+            $customResult = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $customMessage = "Query executed successfully.";
+        } catch (PDOException $e) {
+            $customError = $e->getMessage();
+        }
+    }
 }
 
 // Fetch tables
@@ -59,7 +76,9 @@ $tables = $db->query("SELECT name FROM sqlite_master WHERE type='table' AND name
         th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
         th { background: #eee; }
         form { margin-bottom: 20px; }
-        input[type=text] { width: 100%; }
+        input[type=text], textarea { width: 100%; }
+        textarea { font-family: monospace; }
+        button { margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -89,6 +108,38 @@ $tables = $db->query("SELECT name FROM sqlite_master WHERE type='table' AND name
     <label>New Column (format: name TYPE): <input type="text" name="new_column" required></label><br>
     <button type="submit">Add Column</button>
 </form>
+
+<!-- Execute custom SQL -->
+<h2>Execute Custom SQL Query</h2>
+<form method="post">
+    <input type="hidden" name="action" value="custom_sql">
+    <textarea name="custom_sql" rows="5" placeholder="Enter any SQL query here"></textarea><br>
+    <button type="submit">Run SQL</button>
+</form>
+
+<?php if (!empty($customMessage)): ?>
+    <p style="color:green;"><?= htmlspecialchars($customMessage) ?></p>
+<?php endif; ?>
+<?php if (!empty($customError)): ?>
+    <p style="color:red;">Error: <?= htmlspecialchars($customError) ?></p>
+<?php endif; ?>
+<?php if (!empty($customResult)): ?>
+    <h3>Results:</h3>
+    <table>
+        <tr>
+            <?php foreach (array_keys($customResult[0]) as $col): ?>
+                <th><?= htmlspecialchars($col) ?></th>
+            <?php endforeach; ?>
+        </tr>
+        <?php foreach ($customResult as $row): ?>
+            <tr>
+                <?php foreach ($row as $val): ?>
+                    <td><?= htmlspecialchars($val) ?></td>
+                <?php endforeach; ?>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+<?php endif; ?>
 
 <hr>
 
