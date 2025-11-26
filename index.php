@@ -41,8 +41,8 @@
       <a href="#" class="text-gray-100 hover:text-blue-600">Categories</a>
     </nav> -->
 
-        <button type="button" class="p-3 rounded-md bg-white px-6">
-            Login
+        <button type="button" class="p-3 rounded-md bg-white px-6 text-sm font-medium">
+            Login / Register
         </button>
     </header>
 
