@@ -23,6 +23,8 @@
 
 <body class="bg-gray-100 font-sans">
 
+    <?php include "login-modal.php"; ?>
+
     <!-- Navbar -->
     <header class="bg-black shadow-md py-6 sm:px-12 px-3 flex justify-between items-center">
 
@@ -41,7 +43,7 @@
       <a href="#" class="text-gray-100 hover:text-blue-600">Categories</a>
     </nav> -->
 
-        <button type="button" class="p-3 rounded-md bg-white px-6 text-sm font-medium">
+        <button onclick="toggleModal(true)" type="button" class="p-3 rounded-md bg-white px-6 text-sm font-medium">
             Login / Register
         </button>
     </header>
@@ -52,7 +54,7 @@
 
         <div class="absolute top-0 left-0 w-full h-full bg-black/50"> </div>
 
-        <div class="relative z-50 text-white flex flex-col items-center justify-center gap-6">
+        <div class="relative z-40 text-white flex flex-col items-center justify-center gap-6">
             <h2 class="text-4xl font-bold mb-4">Connect with Friends and Businesses</h2>
             <p class="text-gray-100 mb-6 font-semibold">Organize your social contacts and discover new connections
                 easily.</p>
@@ -67,7 +69,7 @@
 
             <div>
 
-                <div class="rounded-lg shadow-lg relative">
+                <div class="rounded-lg shadow-lg relative z-10">
                     <img src="./images/avatar1.jpg" class="rounded-lg w-full h-[250px] object-cover object-center" />
 
                     <div class="absolute -bottom-6 left-0 w-full flex justify-center items-center">
