@@ -17,17 +17,17 @@ $recent_cards = [
 ?>
 
 <div class="container mx-auto p-4 md:p-8 min-h-screen">
-    <h1 class="text-3xl font-bold text-gray-800 mb-6">Welcome back, <?= htmlspecialchars($username) ?>!</h1>
+    <h1 class="sm:text-2xl md:text-3xl text-xl font-bold text-gray-800 mb-6">Welcome back, <?= htmlspecialchars($username) ?>!</h1>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
         <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-indigo-500">
             <p class="text-sm font-medium text-gray-500">Total Cards Created</p>
-            <p class="text-4xl font-extrabold text-indigo-600 mt-1"><?= $stats['total_cards'] ?></p>
+            <p class="sm:text-4xl text-2xl font-extrabold text-indigo-600 mt-1"><?= $stats['total_cards'] ?></p>
         </div>
 
         <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-teal-500">
             <p class="text-sm font-medium text-gray-500">Total Profile Views</p>
-            <p class="text-4xl font-extrabold text-teal-600 mt-1"><?= $stats['total_views'] ?></p>
+            <p class="sm:text-4xl text-xl font-extrabold text-teal-600 mt-1"><?= $stats['total_views'] ?></p>
         </div>
 
         <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-purple-500 flex flex-col justify-center items-center">
@@ -38,9 +38,9 @@ $recent_cards = [
         </div>
     </div>
 
-    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Quick Actions</h2>
+    <h2 class="sm:text-2xl text-xl font-semibold text-gray-800 mb-4">Quick Actions</h2>
     <div class="flex flex-col sm:flex-row gap-4 mb-10">
-        <a href="?page=create-card" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg text-center transition duration-200">
+        <a href="?page=create-card" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg text-center text-md transition duration-200">
             <i class="fas fa-plus mr-2"></i> Create New Digital Card
         </a>
         <a href="?page=cards" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg shadow-lg text-center transition duration-200">
@@ -48,13 +48,13 @@ $recent_cards = [
         </a>
     </div>
 
-    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Recent Cards</h2>
+    <h2 class="sm:text-2xl text-xl font-semibold text-gray-800 mb-4">Recent Cards</h2>
     <?php if (!empty($recent_cards)): ?>
         <div class="bg-white rounded-lg shadow-md p-4 mb-10">
             <?php foreach ($recent_cards as $card): ?>
                 <div class="flex justify-between items-center py-3 border-b last:border-b-0">
                     <div>
-                        <p class="text-lg font-medium text-indigo-600"><?= htmlspecialchars($card->full_name) ?></p>
+                        <p class="sm:text-lg text-md font-medium text-indigo-600"><?= htmlspecialchars($card->full_name) ?></p>
                         <p class="text-sm text-gray-500 capitalize">Type: <?= htmlspecialchars($card->card_type) ?></p>
                     </div>
                     <div class="text-right">
@@ -75,7 +75,7 @@ $recent_cards = [
 
 <footer class="w-full bg-gray-50 py-4 mt-auto border-t border-gray-200">
     <div class="container mx-auto text-center text-sm text-gray-500">
-        &copy; <?= date('Y') ?> **Connect** - Your Digital Identity Hub. All rights reserved. | <a href="#" class="text-indigo-500 hover:text-indigo-700">Terms</a> | <a href="#" class="text-indigo-500 hover:text-indigo-700">Privacy</a>
+        &copy; <?= date('Y') ?> <b>Connect</b> - Your Digital Identity Hub. All rights reserved. | <a href="#" class="text-indigo-500 hover:text-indigo-700">Terms</a> | <a href="#" class="text-indigo-500 hover:text-indigo-700">Privacy</a>
     </div>
 </footer>
 

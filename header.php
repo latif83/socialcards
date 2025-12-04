@@ -48,7 +48,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
     <!-- Desktop Account Buttons -->
     <div class="hidden md:flex items-center gap-4">
 
-        <?php if (!$isLoggedIn): ?>
+        <?php if ($isLoggedIn): ?>
 
             <a href="dashboard.php?page=profile" class="text-white hover:text-blue-300 text-sm">
                 My Profile
