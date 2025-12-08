@@ -6,6 +6,7 @@ header('Content-Type: application/json'); // API responses are usually JSON
 // Includes
 require_once __DIR__ . '/../config.php';     // Your SQLite PDO connection
 require_once __DIR__ . '/controllers/AuthController.php'; // New Controller file
+require_once __DIR__ . '/controllers/CardController.php'; // New Controller file
 
 // --- 1. Get Route and Method ---
 $route = $_GET['route'] ?? '';
@@ -19,7 +20,7 @@ $routes = [
     // Route Name       => [Controller Class, Method Name]
     'login'           => ['AuthController', 'handleLogin'],
     'register'        => ['AuthController', 'handleRegister'],
-    // 'addCard'         => ['CardController', 'handleAdd'], // Future routes
+    'addCard'         => ['CardController', 'handleAdd'],
     // 'deleteCard'      => ['CardController', 'handleDelete'], // Future routes
 ];
 
