@@ -152,4 +152,34 @@ class AuthController
             return ['success' => false, 'message' => 'An internal server error occurred.'];
         }
     }
+
+      /**
+     * Handles user logout.
+     * Destroys the session and returns a JSON response.
+     */
+    public function handleLogout()
+    {
+
+
+        // Unset all session variables
+        $_SESSION = [];
+
+        // Destroy the session cookie
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000,
+                $params["path"], $params["domain"],
+                $params["secure"], $params["httponly"]
+            );
+        }
+
+        // Destroy the session
+        session_destroy();
+
+        // Return JSON response
+        return [
+            'success' => true,
+            'message' => 'You have been logged out successfully.',
+        ];
+    }
 }

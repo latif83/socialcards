@@ -19,6 +19,7 @@ $response = ['success' => false, 'message' => 'Invalid Request'];
 $routes = [
     // Route Name       => [Controller Class, Method Name]
     'login'           => ['AuthController', 'handleLogin'],
+    'logout'           => ['AuthController', 'handleLogout'],
     'register'        => ['AuthController', 'handleRegister'],
     'addCard'         => ['CardController', 'handleAdd'],
     'getCards'         => ['CardController', 'getAll'],

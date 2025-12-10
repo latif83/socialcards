@@ -5,17 +5,6 @@ session_start();
 if (!isset($activePage))
     $activePage = "";
 
-// check login state
-$isLoggedIn = isset($_SESSION['user_id']);
-
-// Now check
-$isLoggedIn = isset($_SESSION['user_id']);
-
-if ($isLoggedIn) {
-    echo "<h1>User is logged in! User Id : $isLoggedIn;</h1>";
-} else {
-    echo "<h1>No active session found. User Id : $isLoggedIn;</h1>";
-}
 ?>
 
 <header class="bg-black shadow-md py-6 px-3 sm:px-12 flex justify-between items-center">
@@ -57,25 +46,19 @@ if ($isLoggedIn) {
     <!-- Desktop Account Buttons -->
     <div class="hidden md:flex items-center gap-4">
 
-        <?php if ($isLoggedIn): ?>
 
-            <a href="dashboard.php?page=profile" class="text-white hover:text-blue-300 text-sm">
-                My Profile
-            </a>
 
-            <a href="logout.php" class="bg-red-600 text-white px-4 py-2 rounded-md text-sm hover:bg-red-700">
-                Logout
-            </a>
+        <a href="dashboard.php?page=profile" class="text-white hover:text-blue-300 text-sm">
+            My Profile
+        </a>
 
-        <?php else: ?>
+        <a href="#" id="logoutBtn" class="bg-red-600 text-white px-4 py-2 rounded-md text-sm hover:bg-red-700">
+            Logout
+        </a>
 
-            <a href="auth.php" class="bg-white text-black px-5 py-2 rounded-md text-sm">
-                Login / Register
-            </a>
-
-        <?php endif; ?>
 
     </div>
+
 
     <!-- Mobile Menu Button -->
     <button id="menuBtn" class="md:hidden text-white">
@@ -108,25 +91,17 @@ if ($isLoggedIn) {
     </a>
 
 
-    <!-- Mobile Auth Buttons -->
-    <?php if ($isLoggedIn): ?>
 
-        <a href="dashboard.php?page=profile"
-            class="block py-2 border-l-4 pl-2 transition hover:text-blue-300 hover:border-blue-300">
-            My Profile
-        </a>
 
-        <a href="logout.php" class="block bg-red-600 text-white py-2 mt-2 rounded-md text-center hover:bg-red-700">
-            Logout
-        </a>
+    <a href="dashboard.php?page=profile"
+        class="block py-2 border-l-4 pl-2 transition hover:text-blue-300 hover:border-blue-300">
+        My Profile
+    </a>
 
-    <?php else: ?>
-
-        <a href="auth.php" class="block bg-white text-black py-2 mt-2 rounded-md text-center">
-            Login / Register
-        </a>
-
-    <?php endif; ?>
+    <a href="#" id="logoutBtnMobile"
+        class="block bg-red-600 text-white py-2 mt-2 rounded-md text-center hover:bg-red-700">
+        Logout
+    </a>
 
 </div>
 
@@ -137,4 +112,40 @@ if ($isLoggedIn) {
     btn.addEventListener("click", () => {
         menu.classList.toggle("hidden");
     });
+
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+
+    if (!isLoggedIn) {
+        window.alert('Please login to access this page!')
+        window.location.href = 'index.php'
+    }
+
+    async function handleLogout() {
+        // 1. Confirm with the user
+        const confirmLogout = confirm("Are you sure you want to log out?");
+        if (!confirmLogout) return;
+
+        try {
+            // 2. Call your logout API
+            const res = await fetch('api/api.php?route=logout', { method: 'POST' });
+            const data = await res.json();
+
+            if (data.success) {
+                // 3. Clear localStorage flag
+                localStorage.removeItem('isLoggedIn');
+
+                // 4. Redirect to login page
+                window.location.href = 'index.php';
+            } else {
+                alert(data.message || "Logout failed.");
+            }
+        } catch (err) {
+            console.error("Logout error:", err);
+            alert("An error occurred while logging out.");
+        }
+    }
+
+    // Attach click events to both desktop & mobile logout buttons
+    document.getElementById("logoutBtn").addEventListener("click", handleLogout);
+    document.getElementById("logoutBtnMobile").addEventListener("click", handleLogout);
 </script>

@@ -186,6 +186,9 @@ $login_message = ''; // For displaying success/error messages after submission
             const data = await response.json();
 
             if (data.success) {
+                // Mark user as logged in locally
+                localStorage.setItem('isLoggedIn', 'true');
+
                 // SUCCESS: Redirect the user to their dashboard
                 displayMessage(data.message + " Redirecting...", false);
                 setTimeout(() => {
