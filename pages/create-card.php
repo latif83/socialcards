@@ -180,6 +180,8 @@ $loading = false;
                     form.reset();
                     stopLoading()
 
+                    location.replace('dashboard.php?page=cards')
+
                 } else {
                     // Show error message
                     const msgDiv = document.createElement("div");

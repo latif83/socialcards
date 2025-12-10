@@ -21,6 +21,7 @@ $routes = [
     'login'           => ['AuthController', 'handleLogin'],
     'register'        => ['AuthController', 'handleRegister'],
     'addCard'         => ['CardController', 'handleAdd'],
+    'getCards'         => ['CardController', 'getAll'],
     // 'deleteCard'      => ['CardController', 'handleDelete'], // Future routes
 ];
 
