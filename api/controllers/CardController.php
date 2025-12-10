@@ -19,7 +19,7 @@ class CardController
      * - title
      * - content
      * - visibility (public/private)
-     * - image_url (optional, URL to uploaded file)
+     * - profile_image (optional, URL to uploaded file)
      * 
      * Requires user to be logged in so it can attach "user_id".
      */
@@ -41,6 +41,7 @@ class CardController
         $title_role = trim($data['title_role'] ?? '');
         $email = trim($data['email'] ?? '');
         $phone = trim($data['phone'] ?? '');
+        $bio = trim($data['bio'] ?? '');
 
         // Social links: array from form input
         $social_links = $data['social_links'] ?? [];
@@ -82,9 +83,9 @@ class CardController
         try {
             $stmt = $this->db->prepare("
             INSERT INTO cards 
-                (user_id, card_type, name, title_role, email, phone, image_url, social_links, created_at)
+                (user_id, card_type, name, title_role, email, phone, profile_image, social_links,bio)
             VALUES 
-                (:user_id, :card_type, :name, :title_role, :email, :phone, :image_url, :social_links, :created_at)
+                (:user_id, :card_type, :name, :title_role, :email, :phone, :profile_image, :social_links, :bio)
         ");
 
             $stmt->execute([
@@ -94,9 +95,9 @@ class CardController
                 ':title_role' => $title_role,
                 ':email' => $email,
                 ':phone' => $phone,
-                ':image_url' => $uploaded_url,
+                ':profile_image' => $uploaded_url,
                 ':social_links' => $social_links_json,
-                ':created_at' => date('Y-m-d H:i:s'),
+                ':bio' => $bio
             ]);
 
             return [
