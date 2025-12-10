@@ -12,9 +12,9 @@ $isLoggedIn = isset($_SESSION['user_id']);
 $isLoggedIn = isset($_SESSION['user_id']);
 
 if ($isLoggedIn) {
-    echo "<h1>User is logged in!</h1>";
+    echo "<h1>User is logged in! User Id : $isLoggedIn;</h1>";
 } else {
-    echo "<h1>No active session found.</h1>";
+    echo "<h1>No active session found. User Id : $isLoggedIn;</h1>";
 }
 ?>
 
