@@ -18,25 +18,26 @@ $response = ['success' => false, 'message' => 'Invalid Request'];
 // A simple map to direct routes to controllers/methods
 $routes = [
     // Route Name       => [Controller Class, Method Name]
-    'login'           => ['AuthController', 'handleLogin'],
-    'logout'           => ['AuthController', 'handleLogout'],
-    'register'        => ['AuthController', 'handleRegister'],
-    'addCard'         => ['CardController', 'handleAdd'],
-    'getCards'         => ['CardController', 'getAll'],
+    'login' => ['AuthController', 'handleLogin'],
+    'logout' => ['AuthController', 'handleLogout'],
+    'register' => ['AuthController', 'handleRegister'],
+    'addCard' => ['CardController', 'handleAdd'],
+    'getCards' => ['CardController', 'getAll'],
+    'getPublicCards' => ['CardController', 'getAllPublicCards'],
     // 'deleteCard'      => ['CardController', 'handleDelete'], // Future routes
 ];
 
 if (isset($routes[$route])) {
     list($controllerName, $methodName) = $routes[$route];
-    
+
     // Check if the Controller class exists
     if (class_exists($controllerName) && method_exists($controllerName, $methodName)) {
         // Instantiate the controller, passing the database connection
         $controller = new $controllerName($db);
-        
+
         // Execute the method and capture the response
         $response = $controller->$methodName($_POST, $method);
-        
+
     } else {
         $response['message'] = "API Controller or method not found.";
     }

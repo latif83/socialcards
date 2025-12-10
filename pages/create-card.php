@@ -69,6 +69,13 @@ $loading = false;
             </div>
 
             <div>
+                <label for="address" class="block text-gray-700 font-medium mb-2">Address / location</label>
+                <input type="text" id="address" name="address"
+                    class="w-full border border-gray-300 p-2 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="Enter Address">
+            </div>
+
+            <div>
                 <label for="bio" class="block text-gray-700 font-medium mb-2">Bio:</label>
                 <input type="text" id="bio" name="bio"
                     class="w-full border border-gray-300 p-2 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
@@ -94,7 +101,7 @@ $loading = false;
                 ?>
                 <div>
                     <label for="<?= $key ?>" class="block text-gray-700 font-medium mb-2"><?= $label ?></label>
-                    <input type="url" id="<?= $key ?>" name="social_links[<?= $key ?>]"
+                    <input type="text" id="<?= $key ?>" name="social_links[<?= $key ?>]"
                         class="w-full border border-gray-300 p-2 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
                         placeholder="https://">
                 </div>

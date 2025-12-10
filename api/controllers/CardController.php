@@ -42,6 +42,7 @@ class CardController
         $email = trim($data['email'] ?? '');
         $phone = trim($data['phone'] ?? '');
         $bio = trim($data['bio'] ?? '');
+        $address = trim($data['address'] ?? '');
 
         // Social links: array from form input
         $social_links = $data['social_links'] ?? [];
@@ -72,7 +73,7 @@ class CardController
 
             if (move_uploaded_file($fileTmp, $filePath)) {
                 // Public URL for Azure
-                $uploaded_url = "/uploads/" . $fileName;
+                $uploaded_url = "uploads/" . $fileName;
             } else {
                 return ['success' => false, 'message' => "Failed to upload image."];
             }
@@ -84,9 +85,9 @@ class CardController
         try {
             $stmt = $this->db->prepare("
             INSERT INTO cards 
-                (user_id, card_type, name, title_role, email, phone, profile_image, social_links,bio)
+                (user_id, card_type, name, title_role, email, phone, profile_image, social_links,bio,address)
             VALUES 
-                (:user_id, :card_type, :name, :title_role, :email, :phone, :profile_image, :social_links, :bio)
+                (:user_id, :card_type, :name, :title_role, :email, :phone, :profile_image, :social_links, :bio,:address)
         ");
 
             $stmt->execute([
@@ -98,7 +99,8 @@ class CardController
                 ':phone' => $phone,
                 ':profile_image' => $uploaded_url,
                 ':social_links' => $social_links_json,
-                ':bio' => $bio
+                ':bio' => $bio,
+                ':address' => $address
             ]);
 
             return [
@@ -127,7 +129,7 @@ class CardController
             $stmt = $this->db->prepare("
             SELECT * FROM cards 
             WHERE user_id = :user_id
-            ORDER BY id DESC
+            ORDER BY created_at DESC
         ");
             $stmt->execute([':user_id' => $user_id]);
 
@@ -184,6 +186,27 @@ class CardController
         } catch (PDOException $e) {
             error_log("DB Error getOneCard: " . $e->getMessage());
             return ['success' => false, 'message' => 'Database error fetching card.'];
+        }
+    }
+
+
+    public function getAllPublicCards()
+    {
+        try {
+            // Fetch all cards from the table
+            $stmt = $this->db->prepare("SELECT * FROM cards ORDER BY created_at DESC");
+            $stmt->execute(); // no parameters needed
+
+            $cards = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return [
+                'success' => true,
+                'cards' => $cards
+            ];
+
+        } catch (PDOException $e) {
+            error_log("DB Error getAllPublicCards: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Database error fetching cards.'];
         }
     }
 
