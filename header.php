@@ -7,6 +7,15 @@ if (!isset($activePage))
 
 // check login state
 $isLoggedIn = isset($_SESSION['user_id']);
+
+// Now check
+$isLoggedIn = isset($_SESSION['user_id']);
+
+if ($isLoggedIn) {
+    echo "<h1>User is logged in!</h1>";
+} else {
+    echo "<h1>No active session found.</h1>";
+}
 ?>
 
 <header class="bg-black shadow-md py-6 px-3 sm:px-12 flex justify-between items-center">
