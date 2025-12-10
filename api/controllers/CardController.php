@@ -149,24 +149,32 @@ class CardController
     /**
      * Fetch a single card by ID (and ensure it belongs to the logged-in user).
      */
-    public function getOne($id)
+    public function getOne($postData, $method)
     {
-        if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
-            return ['success' => false, 'message' => 'You must be logged in.'];
+
+        if ($method !== 'GET') {
+            return ['success' => false, 'message' => 'GET request required'];
         }
 
-        $user_id = $_SESSION['user_id'];
-        $id = intval($id);
+        // Read ID from URL
+        $id = isset($_GET['id']) ? intval($_GET['id']) : null;
+
+        if (!$id) {
+            return [
+                'success' => false,
+                'message' => 'Card ID is missing in the URL.'
+            ];
+        }
+
 
         try {
             $stmt = $this->db->prepare("
             SELECT * FROM cards 
-            WHERE id = :id AND user_id = :user_id
+            WHERE id = :id
             LIMIT 1
         ");
             $stmt->execute([
-                ':id' => $id,
-                ':user_id' => $user_id
+                ':id' => $id
             ]);
 
             $card = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -174,7 +182,7 @@ class CardController
             if (!$card) {
                 return [
                     'success' => false,
-                    'message' => 'Card not found or does not belong to you.'
+                    'message' => 'Card not found.'
                 ];
             }
 

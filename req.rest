@@ -1,0 +1,1 @@
+http://localhost/socialcards/api/api.php?route=getCard&id=13

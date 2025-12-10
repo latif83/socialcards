@@ -218,7 +218,7 @@
             </p>
 
             <div class="mt-6 text-center">
-                <a href="card-details.html"
+                <a href="card-details.html?cardid=${card.id}"
                     class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded">
                     View More...
                 </a>

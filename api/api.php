@@ -24,6 +24,7 @@ $routes = [
     'addCard' => ['CardController', 'handleAdd'],
     'getCards' => ['CardController', 'getAll'],
     'getPublicCards' => ['CardController', 'getAllPublicCards'],
+    'getCard' => ['CardController','getOne']
     // 'deleteCard'      => ['CardController', 'handleDelete'], // Future routes
 ];
 

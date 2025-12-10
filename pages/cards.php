@@ -7,22 +7,22 @@
         </a>
     </div>
 
- <div id="loadingCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <?php for ($i = 0; $i < 3; $i++): ?>
-        <div class="animate-pulse bg-white rounded-xl shadow-xl p-6 border-t-4 border-gray-300">
-            <div class="h-4 w-20 bg-gray-300 rounded"></div>
-            <div class="h-6 w-32 bg-gray-300 rounded mt-3"></div>
-            <div class="h-4 w-24 bg-gray-300 rounded mt-2"></div>
-            <div class="h-4 w-full bg-gray-300 rounded mt-4"></div>
-            <div class="h-4 w-3/4 bg-gray-300 rounded mt-2"></div>
-            <div class="flex gap-2 mt-6">
-                <div class="flex-1 h-10 bg-gray-300 rounded"></div>
-                <div class="flex-1 h-10 bg-gray-300 rounded"></div>
-                <div class="flex-1 h-10 bg-gray-300 rounded"></div>
+    <div id="loadingCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <?php for ($i = 0; $i < 3; $i++): ?>
+            <div class="animate-pulse bg-white rounded-xl shadow-xl p-6 border-t-4 border-gray-300">
+                <div class="h-4 w-20 bg-gray-300 rounded"></div>
+                <div class="h-6 w-32 bg-gray-300 rounded mt-3"></div>
+                <div class="h-4 w-24 bg-gray-300 rounded mt-2"></div>
+                <div class="h-4 w-full bg-gray-300 rounded mt-4"></div>
+                <div class="h-4 w-3/4 bg-gray-300 rounded mt-2"></div>
+                <div class="flex gap-2 mt-6">
+                    <div class="flex-1 h-10 bg-gray-300 rounded"></div>
+                    <div class="flex-1 h-10 bg-gray-300 rounded"></div>
+                    <div class="flex-1 h-10 bg-gray-300 rounded"></div>
+                </div>
             </div>
-        </div>
-    <?php endfor; ?>
-</div>
+        <?php endfor; ?>
+    </div>
 
 
     <div id="noCardsBox"
@@ -41,7 +41,20 @@
 
 </div>
 
+<?php include "cardsModal.php"; ?>
+
 <script>
+
+    function showCardDetails(cardId) {
+
+        const cardModal = document.getElementById('cardModal')
+
+
+        fetchCard(cardId)
+
+        cardModal.classList.remove("hidden")
+    }
+
     function confirmDelete(cardId, cardName) {
         if (confirm("Are you sure you want to permanently delete the card: \"" + cardName + "\"? This action cannot be undone.")) {
             // In the final version, you would submit a form or make an AJAX request here
@@ -129,10 +142,10 @@
                 </div>
 
                 <div class="flex gap-2 mt-4 border-t pt-4">
-                    <a href="/${card.id}" target="_blank"
+                    <button onClick="showCardDetails(${card.id})"
                         class="flex-1 text-center bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg text-sm font-medium">
                         <i class="fas fa-external-link-alt mr-1"></i> View
-                    </a>
+                    </button>
 
                     <a href="?page=edit-card&id=${card.card_id}"
                         class="flex-1 text-center bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-lg text-sm font-medium">
