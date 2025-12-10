@@ -81,6 +81,22 @@
     <?php endfor; ?>
 </div>
 
+
+<div id="noCardsBox"
+    class="text-center p-12 bg-white rounded-lg shadow-lg border-2 border-dashed border-gray-300">
+    <i class="fas fa-id-card-alt text-6xl text-gray-400 mb-4"></i>
+    <p class="text-2xl text-gray-700 font-bold mb-2">Oops! Looks a bit empty here…</p>
+    <p class="text-gray-500 mb-6">No digital cards have been created yet. You could be the first to showcase your
+        profile!</p>
+    <a href="dashboard.php?page=create-card"
+        class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-6 rounded-lg shadow-lg transition">
+        Create Your Card Now
+    </a>
+</div>
+
+
+
+
 <div id="cardsContainer" class="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-3 sm:grid-cols-2 gap-4">
 
 </div>
