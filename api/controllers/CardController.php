@@ -66,7 +66,7 @@ class CardController
             }
 
             $fileTmp = $_FILES['profile_image']['tmp_name'];
-            $fileName = uniqid() . "_" . basename($_FILES['profile_image']['name']);
+            $fileName = uniqid();
             $filePath = $uploadDir . $fileName;
 
             if (move_uploaded_file($fileTmp, $filePath)) {
