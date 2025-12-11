@@ -45,6 +45,8 @@
 
 <?php include "editCardModal.php"; ?>
 
+<?php include "deleteCardModal.php"; ?>
+
 <script>
 
     function showCardDetails(cardId) {
@@ -57,19 +59,18 @@
         cardModal.classList.remove("hidden")
     }
 
-    function showEditCardModal(cardId){
+    function showEditCardModal(cardId) {
         const editCardModal = document.getElementById('editCardModal')
         fetchCardData(cardId)
         editCardModal.classList.remove("hidden")
     }
 
-    function confirmDelete(cardId, cardName) {
-        if (confirm("Are you sure you want to permanently delete the card: \"" + cardName + "\"? This action cannot be undone.")) {
-            // In the final version, you would submit a form or make an AJAX request here
-            // Example: window.location.href = '?page=delete-card&id=' + cardId;
-            console.log('Attempting to delete card ID:', cardId);
-            alert("Delete initiated for " + cardName + ". (Functionality to be added)");
-        }
+       // Function to open the modal and set the ID
+    function openDeleteModal(cardId) {
+         const deleteModal = document.getElementById('deleteCardModal');
+        cardIdToDelete.value = cardId; // Store the ID
+        deleteStatusMessage.classList.add('hidden'); // Clear previous messages
+        deleteModal.classList.remove('hidden');
     }
 
     const body = document.querySelector('body')
@@ -96,7 +97,7 @@
             msgDiv.className = "alert bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 fixed top-5 right-5";
             msgDiv.innerHTML = `<span>Card retrieved successfully!</span>`;
             body.append(msgDiv);
-            
+
             setTimeout(() => {
                 msgDiv.remove()
             }, 3000);
@@ -164,7 +165,7 @@
                         <i class="fas fa-edit mr-1"></i> Edit
                     </button>
 
-                    <button onclick="confirmDelete(${card.card_id}, '${card.name}')"
+                    <button onclick="openDeleteModal(${card.id})"
                         class="flex-1 text-center bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg text-sm font-medium">
                         <i class="fas fa-trash-alt mr-1"></i> Delete
                     </button>

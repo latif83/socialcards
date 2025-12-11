@@ -358,5 +358,92 @@ class CardController
     }
 
 
+    /**
+ * Handles the deletion of a specific card, restricted to the card's owner.
+ * Also deletes the associated profile image file from the server.
+ * @param array $data Contains the card_id from the request.
+ * @param string $method The request method (should ideally be POST or DELETE).
+ * @return array JSON response array.
+ */
+public function handleDelete($data, $method)
+{
+    // Using POST is common for AJAX, but DELETE is technically more correct. 
+    // We'll proceed assuming POST or a parameter-based DELETE via POST is used.
+    if ($method !== 'POST') {
+        return ['success' => false, 'message' => 'Deletion requires a POST request.'];
+    }
+
+    // --- 0. Authentication and ID Check ---
+    if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
+        return ['success' => false, 'message' => 'Authentication required to delete a card.'];
+    }
+
+    $card_id = $data['card_id'] ?? null;
+    if (empty($card_id)) {
+        return ['success' => false, 'message' => 'Card ID is missing for deletion.'];
+    }
+    
+    $user_id = $_SESSION['user_id'];
+
+    try {
+        // --- 1. Retrieve File Path for Deletion ---
+        // CRITICAL: First, retrieve the file path and verify ownership before deleting anything.
+        $stmt = $this->db->prepare("
+            SELECT profile_image 
+            FROM cards 
+            WHERE id = :id AND user_id = :user_id
+        ");
+        
+        // Note: Using :id placeholder to match your primary key column name.
+        $stmt->bindParam(':id', $card_id);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+        
+        $card = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$card) {
+            return ['success' => false, 'message' => 'Card not found or access denied.'];
+        }
+
+        $image_path = $card['profile_image']; // Relative path: "uploads/filename.jpg"
+        
+        // --- 2. Delete the Database Record ---
+        $stmt = $this->db->prepare("DELETE FROM cards WHERE id = :id AND user_id = :user_id");
+        $stmt->bindParam(':id', $card_id);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+
+        if ($stmt->rowCount() === 0) {
+             // Should not happen if step 1 passed, but double-check
+             return ['success' => false, 'message' => 'Database deletion failed or card already removed.'];
+        }
+
+        // --- 3. Delete the Associated File (Cleanup) ---
+        if (!empty($image_path)) {
+            // Construct the absolute path from the relative path stored in the DB
+            // Assuming your file path 'uploads/...' is relative to two directories up (the app root)
+            $absolute_path = __DIR__ . "/../../" . $image_path; 
+            
+            if (file_exists($absolute_path) && is_file($absolute_path)) {
+                if (unlink($absolute_path)) {
+                    // File successfully deleted
+                } else {
+                    error_log("FILE DELETE FAILED: Could not unlink file at: " . $absolute_path);
+                    // Do not fail the API call, as the DB record is gone, but log the error.
+                }
+            }
+        }
+
+        return [
+            'success' => true,
+            'message' => 'Card successfully deleted.'
+        ];
+
+    } catch (PDOException $e) {
+        error_log("DB Error DeleteCard: " . $e->getMessage());
+        return ['success' => false, 'message' => 'A database error occurred during deletion.'];
+    }
+}
+
 
 }

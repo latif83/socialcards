@@ -320,7 +320,4 @@ $card_id = $_GET['id'] ?? null;
             stopLoading(false);
         }
     });
-
-    // Run the initial data fetch when the page loads
-    document.addEventListener("DOMContentLoaded", fetchCardData);
 </script>

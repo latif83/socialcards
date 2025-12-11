@@ -26,7 +26,7 @@ $routes = [
     'getPublicCards' => ['CardController', 'getAllPublicCards'],
     'getCard' => ['CardController','getOne'],
     'updateCard' => ['CardController','handleUpdate'],
-    // 'deleteCard'      => ['CardController', 'handleDelete'], // Future routes
+    'deleteCard'      => ['CardController', 'handleDelete']
 ];
 
 if (isset($routes[$route])) {
