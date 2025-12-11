@@ -115,6 +115,145 @@ class CardController
     }
 
     /**
+     * Handles the update submission for an existing card.
+     * @param array $data The $_POST data including card_id and existing data.
+     * @param string $method The request method (should be POST).
+     * @return array JSON response array.
+     */
+    public function handleUpdate($data, $method)
+    {
+        if ($method !== 'POST') {
+            return ['success' => false, 'message' => 'POST request required for update.'];
+        }
+
+        if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
+            return ['success' => false, 'message' => 'You must be logged in to update a card.'];
+        }
+
+        $user_id = $_SESSION['user_id'];
+        $card_id = $data['card_id'] ?? null;
+        $existing_image_path = $data['existing_image_path'] ?? null; // Existing image path from hidden field
+
+        // Validate essential IDs
+        if (empty($card_id)) {
+            return ['success' => false, 'message' => 'Card ID is missing for update.'];
+        }
+
+        // Main fields (trimming to match handleAdd)
+        $card_type = trim($data['card_type'] ?? '');
+        $name = trim($data['name'] ?? '');
+        $title_role = trim($data['title_role'] ?? '');
+        $email = trim($data['email'] ?? '');
+        $phone = trim($data['phone'] ?? '');
+        $bio = trim($data['bio'] ?? '');
+        $address = trim($data['address'] ?? '');
+
+        // Social links: array from form input
+        $social_links = $data['social_links'] ?? [];
+        $social_links_json = json_encode($social_links);
+
+        // Validate required fields
+        if (empty($card_type) || empty($name)) {
+            return ['success' => false, 'message' => "Card type and Name are required."];
+        }
+
+        // --------------------------
+        // HANDLE FILE UPLOAD / KEEP EXISTING
+        // --------------------------
+        $final_image_path = $existing_image_path; // Start with the existing path
+
+        // Check if a NEW file was uploaded
+        if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
+            $uploadDir = __DIR__ . "/../../uploads/";
+
+            // Ensure the directory exists
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+
+            $fileTmp = $_FILES['profile_image']['tmp_name'];
+            $fileName = uniqid() . '.' . pathinfo($_FILES['profile_image']['name'], PATHINFO_EXTENSION);
+            $filePath = $uploadDir . $fileName;
+
+            if (move_uploaded_file($fileTmp, $filePath)) {
+                // New file uploaded successfully, set the new public URL
+                $final_image_path = "uploads/" . $fileName;
+
+                // OPTIONAL: Delete the old file if it exists and a new one was uploaded
+                // Note: This requires getting the full local path of the $existing_image_path
+                // and using unlink(), which is a good practice for cleanup.
+                /*
+                if (!empty($existing_image_path)) {
+                    $oldFilePath = __DIR__ . "/../../" . $existing_image_path;
+                    if (file_exists($oldFilePath)) {
+                        unlink($oldFilePath);
+                    }
+                }
+                */
+
+            } else {
+                return ['success' => false, 'message' => "Failed to upload new image."];
+            }
+        }
+        // If no new file, $final_image_path remains $existing_image_path.
+
+
+        // --------------------------
+        // UPDATE DATABASE
+        // --------------------------
+        try {
+            $stmt = $this->db->prepare("
+        UPDATE cards 
+        SET 
+            card_type = :card_type, 
+            name = :name, 
+            title_role = :title_role, 
+            email = :email, 
+            phone = :phone, 
+            profile_image = :profile_image, 
+            social_links = :social_links, 
+            bio = :bio,
+            address = :address,
+            updated_at = CURRENT_TIMESTAMP  -- Added for tracking modification time
+        WHERE 
+            id = :id AND user_id = :user_id
+    ");
+
+            $stmt->execute([
+                // Parameters for the SET clause (9 items)
+                ':card_type' => $card_type,
+                ':name' => $name,
+                ':title_role' => $title_role,
+                ':email' => $email,
+                ':phone' => $phone,
+                ':profile_image' => $final_image_path,
+                ':social_links' => $social_links_json,
+                ':bio' => $bio,
+                ':address' => $address,
+
+                // Parameters for the WHERE clause (2 items)
+                // CRITICAL FIX: Changed placeholder name to :id (to match table column) 
+                // and fixed the key name in the array.
+                ':id' => $card_id,       // Binds $card_id value to the :id placeholder
+                ':user_id' => $user_id   // Binds $user_id value to the :user_id placeholder
+            ]);
+
+            if ($stmt->rowCount() === 0) {
+                return ['success' => false, 'message' => 'Update failed: Card not found or no changes detected.'];
+            }
+
+            return [
+                'success' => true,
+                'message' => 'Card updated successfully!'
+            ];
+
+        } catch (PDOException $e) {
+            error_log("DB Error UpdateCard: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Database error updating card.', 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
      * Fetch all cards belonging to the logged-in user.
      */
     public function getAll()

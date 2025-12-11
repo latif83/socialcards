@@ -43,6 +43,8 @@
 
 <?php include "cardsModal.php"; ?>
 
+<?php include "editCardModal.php"; ?>
+
 <script>
 
     function showCardDetails(cardId) {
@@ -53,6 +55,12 @@
         fetchCard(cardId)
 
         cardModal.classList.remove("hidden")
+    }
+
+    function showEditCardModal(cardId){
+        const editCardModal = document.getElementById('editCardModal')
+        fetchCardData(cardId)
+        editCardModal.classList.remove("hidden")
     }
 
     function confirmDelete(cardId, cardName) {
@@ -88,6 +96,10 @@
             msgDiv.className = "alert bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 fixed top-5 right-5";
             msgDiv.innerHTML = `<span>Card retrieved successfully!</span>`;
             body.append(msgDiv);
+            
+            setTimeout(() => {
+                msgDiv.remove()
+            }, 3000);
 
             console.log(data.cards)
 
@@ -147,10 +159,10 @@
                         <i class="fas fa-external-link-alt mr-1"></i> View
                     </button>
 
-                    <a href="?page=edit-card&id=${card.card_id}"
+                    <button onClick="showEditCardModal(${card.id})"
                         class="flex-1 text-center bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-lg text-sm font-medium">
                         <i class="fas fa-edit mr-1"></i> Edit
-                    </a>
+                    </button>
 
                     <button onclick="confirmDelete(${card.card_id}, '${card.name}')"
                         class="flex-1 text-center bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg text-sm font-medium">
