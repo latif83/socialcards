@@ -153,7 +153,7 @@ class AuthController
         }
     }
 
-      /**
+    /**
      * Handles user logout.
      * Destroys the session and returns a JSON response.
      */
@@ -167,9 +167,14 @@ class AuthController
         // Destroy the session cookie
         if (ini_get("session.use_cookies")) {
             $params = session_get_cookie_params();
-            setcookie(session_name(), '', time() - 42000,
-                $params["path"], $params["domain"],
-                $params["secure"], $params["httponly"]
+            setcookie(
+                session_name(),
+                '',
+                time() - 42000,
+                $params["path"],
+                $params["domain"],
+                $params["secure"],
+                $params["httponly"]
             );
         }
 
@@ -181,5 +186,70 @@ class AuthController
             'success' => true,
             'message' => 'You have been logged out successfully.',
         ];
+    }
+
+
+    /**
+     * Provides a dashboard summary including total cards, total views, and recent cards.
+     * Requires the user to be logged in.
+     * @return array JSON response array with summary data.
+     */
+    public function handleSummary()
+    {
+        // --- 0. Authentication Check ---
+        if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
+            return ['success' => false, 'message' => 'Authentication required for summary access.'];
+        }
+
+        $user_id = $_SESSION['user_id'];
+        $summary_data = [];
+
+        try {
+            // --- 1. Total Cards Count (Count all records for the user) ---
+            $stmt1 = $this->db->prepare("
+            SELECT COUNT(id) AS total_cards 
+            FROM cards 
+            WHERE user_id = :user_id
+        ");
+            $stmt1->bindParam(':user_id', $user_id);
+            $stmt1->execute();
+            $summary_data['total_cards'] = (int) $stmt1->fetchColumn();
+
+
+            // --- 2. Total Views (Sum the view_count from all user cards) ---
+            $stmt2 = $this->db->prepare("
+            SELECT SUM(views_count) AS total_views 
+            FROM cards 
+            WHERE user_id = :user_id
+        ");
+            $stmt2->bindParam(':user_id', $user_id);
+            $stmt2->execute();
+            // SUM returns NULL if no rows, so use ?? 0 to ensure it's an integer
+            $total_views = $stmt2->fetchColumn();
+            $summary_data['total_views'] = (int) ($total_views ?? 0);
+
+
+            // --- 3. Recent Cards (Fetch the 2 most recently created cards) ---
+            $stmt3 = $this->db->prepare("
+            SELECT id, name, created_at, views_count, card_type
+            FROM cards 
+            WHERE user_id = :user_id
+            ORDER BY created_at DESC 
+            LIMIT 2
+        ");
+            $stmt3->bindParam(':user_id', $user_id);
+            $stmt3->execute();
+            $summary_data['recent_cards'] = $stmt3->fetchAll(PDO::FETCH_ASSOC);
+
+
+            return [
+                'success' => true,
+                'summary' => $summary_data
+            ];
+
+        } catch (PDOException $e) {
+            error_log("Summary PDO Error: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Database error loading summary data.', 'error' => $e->getMessage()];
+        }
     }
 }

@@ -445,5 +445,43 @@ public function handleDelete($data, $method)
     }
 }
 
+/**
+ * Atomically increments the view_count for a specific card.
+ * This method is public and designed to be called on every public card load.
+ * @param array $data Contains the card_id.
+ * @return array JSON response array (usually success only).
+ */
+public function incrementViewCount($data)
+{
+    $card_id = $data['card_id'] ?? null;
+    
+    if (empty($card_id)) {
+        return ['success' => false, 'message' => 'Card ID is required.'];
+    }
+
+    try {
+        // We use UPDATE and increment the column directly (atomic operation)
+        $stmt = $this->db->prepare("
+            UPDATE cards 
+            SET views_count = views_count + 1 
+            WHERE id = :card_id
+        ");
+
+        $stmt->bindParam(':card_id', $card_id);
+        $stmt->execute();
+        
+        // If rowCount is 0, the card ID probably doesn't exist.
+        if ($stmt->rowCount() === 0) {
+             return ['success' => false, 'message' => 'Card not found or already deleted.'];
+        }
+
+        return ['success' => true];
+
+    } catch (PDOException $e) {
+        error_log("View Count PDO Error: " . $e->getMessage());
+        return ['success' => false, 'message' => 'Counting failed.','error' => $e->getMessage()];
+    }
+}
+
 
 }

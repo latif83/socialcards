@@ -20,13 +20,15 @@ $routes = [
     // Route Name       => [Controller Class, Method Name]
     'login' => ['AuthController', 'handleLogin'],
     'logout' => ['AuthController', 'handleLogout'],
+    'summary' => ['AuthController','handleSummary'],
     'register' => ['AuthController', 'handleRegister'],
     'addCard' => ['CardController', 'handleAdd'],
     'getCards' => ['CardController', 'getAll'],
     'getPublicCards' => ['CardController', 'getAllPublicCards'],
     'getCard' => ['CardController','getOne'],
     'updateCard' => ['CardController','handleUpdate'],
-    'deleteCard'      => ['CardController', 'handleDelete']
+    'deleteCard'      => ['CardController', 'handleDelete'],
+    'increment' => ['CardController', 'incrementViewCount'],
 ];
 
 if (isset($routes[$route])) {
