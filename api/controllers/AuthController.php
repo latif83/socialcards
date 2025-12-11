@@ -134,7 +134,7 @@ class AuthController
                 $_SESSION['logged_in'] = true;
                 $_SESSION['user_id'] = $user_id;
                 $_SESSION['email'] = $email;
-                $_SESSION['full_name'] = ''; // Initialize full name
+                $_SESSION['name'] = $name; // Initialize full name
 
                 return [
                     'success' => true,
@@ -240,6 +240,8 @@ class AuthController
             $stmt3->bindParam(':user_id', $user_id);
             $stmt3->execute();
             $summary_data['recent_cards'] = $stmt3->fetchAll(PDO::FETCH_ASSOC);
+
+            $summary_data['username'] = $_SESSION['name'];
 
 
             return [

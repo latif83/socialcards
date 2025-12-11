@@ -6,7 +6,7 @@ $username = "Connect User";
 ?>
 
 <div class="container mx-auto p-4 md:p-8">
-    <h1 class="sm:text-2xl md:text-3xl text-xl font-bold text-gray-800 mb-6">Welcome back, <?= htmlspecialchars($username) ?>!</h1>
+    <h1 class="sm:text-2xl md:text-3xl text-xl font-bold text-gray-800 mb-6">Welcome back, <span id="username"></span>!</h1>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
         <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-indigo-500">
@@ -71,6 +71,8 @@ $username = "Connect User";
 
             // Display Total Views
             document.getElementById('totalViewsCount').textContent = summary.total_views.toLocaleString(); 
+
+            document.getElementById('username').textContent = summary.username;
             
             // Display Recent Cards (Example)
             const recentCardsList = document.getElementById('recentCardsList');
